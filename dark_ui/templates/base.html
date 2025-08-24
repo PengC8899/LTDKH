@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title or '龍腾娱乐大客户广播' }}</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="header-bar">
+          <div class="header-left">
+            <h1>龍腾娱乐大客户广播</h1>
+            <span class="tag">在线</span>
+          </div>
+          <nav class="nav-links">
+            <a class="btn secondary" href="/">客户记录</a>
+            <a class="btn secondary" href="/ui/groups">群组</a>
+            <a class="btn secondary" href="/ui/top-users">TOP 用户</a>
+            <a class="btn secondary" href="/docs" target="_blank" rel="noreferrer">API 文档</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+    <main>
+      <div class="container">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+    <script>
+      function copyText(text){
+        navigator.clipboard.writeText(text).then(()=>{ 
+          // 创建一个玻璃拟态风格的提示
+          const notification = document.createElement('div');
+          notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #e0e6ed;
+            padding: 15px 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-weight: 500;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease-out;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          `;
+          notification.textContent = '已复制：' + text;
+          document.body.appendChild(notification);
+          
+          setTimeout(() => {
+            notification.style.animation = 'fadeOut 0.3s ease-in forwards';
+            setTimeout(() => document.body.removeChild(notification), 300);
+          }, 2000);
+        });
+      }
+      
+      // 添加CSS动画
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOut {
+          from { opacity: 1; transform: translateY(0); }
+          to { opacity: 0; transform: translateY(-20px); }
+        }
+      `;
+      document.head.appendChild(style);
+    </script>
+  </body>
+</html>

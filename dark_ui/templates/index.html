@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <form method="get" action="/">
+    <div class="filters">
+      <label class="sr-only" for="q-username">用户名</label>
+      <input id="q-username" title="用户名" type="text" name="username" placeholder="用户名 @xxx" value="{{ q.username or '' }}" />
+
+      <label class="sr-only" for="q-keyword">关键词</label>
+      <input id="q-keyword" title="关键词" type="text" name="keyword" placeholder="关键词(大/小/单/双)" value="{{ q.keyword or '' }}" />
+
+      <label class="sr-only" for="q-chat-title">群组名</label>
+      <input id="q-chat-title" title="群组名" type="text" name="chat_title" placeholder="群组名" value="{{ q.chat_title or '' }}" />
+
+      <label class="sr-only" for="q-start-time">开始时间</label>
+      <input id="q-start-time" title="开始时间" type="datetime-local" name="start_time" value="{{ q.start_time or '' }}" />
+
+      <label class="sr-only" for="q-end-time">结束时间</label>
+      <input id="q-end-time" title="结束时间" type="datetime-local" name="end_time" value="{{ q.end_time or '' }}" />
+
+      <label class="sr-only" for="q-min-amount">最小金额</label>
+      <input id="q-min-amount" title="最小金额" type="number" min="0" step="50" name="min_amount" placeholder="最小金额(如 300)" value="{{ q.min_amount or '' }}" />
+
+      <button class="btn" type="submit">筛选</button>
+      <a class="btn secondary" href="/">重置</a>
+    </div>
+  </form>
+  <div class="muted mt-8">支持按时间、群组、用户名、关键词筛选</div>
+</div>
+
+<div class="card">
+  <h3 class="h3-compact">历史记录（共 {{ total }} 条）</h3>
+  <div class="flex mt-8">
+    <a class="btn" href="/export.csv?username={{ q.username or '' }}&keyword={{ q.keyword or '' }}&chat_title={{ q.chat_title or '' }}&start_time={{ q.start_time or '' }}&end_time={{ q.end_time or '' }}&min_amount={{ q.min_amount or '' }}">导出 CSV</a>
+    <a class="btn secondary" href="/export_usernames.csv?username={{ q.username or '' }}&keyword={{ q.keyword or '' }}&chat_title={{ q.chat_title or '' }}&start_time={{ q.start_time or '' }}&end_time={{ q.end_time or '' }}&min_amount={{ q.min_amount or '' }}">导出去重用户名</a>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>用户名</th>
+          <th>用户ID</th>
+          <th>关键词</th>
+          <th>金额</th>
+          <th>群组</th>
+          <th>时间</th>
+          <th>创建时间</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td class="mono">{{ item.id }}</td>
+          <td>
+            {% if item.username %}
+              <span class="tag clickable" onclick="copyText('{{ item.username }}')">{{ item.username }}</span>
+            {% else %}
+              -
+            {% endif %}
+          </td>
+          <td class="mono">{{ item.user_id or '-' }}</td>
+          <td>{{ item.keyword }}</td>
+          <td class="mono">{{ '{:,}'.format(item.amount) }}</td>
+          <td>{{ item.chat_title }}<div class="mono muted">{{ item.chat_id }}</div></td>
+          <td class="mono">{{ item.hit_at }}</td>
+          <td class="mono">{{ item.created_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="flex mt-8">
+    <span>第 {{ page }} / {{ (total + page_size - 1) // page_size }} 页，共 {{ total }} 条记录</span>
+    {% if page > 1 %}
+      <a class="btn secondary" href="/?page={{ page - 1 }}&page_size={{ page_size }}&username={{ q.username or '' }}&keyword={{ q.keyword or '' }}&chat_title={{ q.chat_title or '' }}&start_time={{ q.start_time or '' }}&end_time={{ q.end_time or '' }}&min_amount={{ q.min_amount or '' }}">上一页</a>
+    {% endif %}
+    {% if page * page_size < total %}
+      <a class="btn" href="/?page={{ page + 1 }}&page_size={{ page_size }}&username={{ q.username or '' }}&keyword={{ q.keyword or '' }}&chat_title={{ q.chat_title or '' }}&start_time={{ q.start_time or '' }}&end_time={{ q.end_time or '' }}&min_amount={{ q.min_amount or '' }}">下一页</a>
+    {% endif %}
+    {% if (total + page_size - 1) // page_size > 1 %}
+      <a class="btn secondary" href="/?page=1&page_size={{ page_size }}&username={{ q.username or '' }}&keyword={{ q.keyword or '' }}&chat_title={{ q.chat_title or '' }}&start_time={{ q.start_time or '' }}&end_time={{ q.end_time or '' }}&min_amount={{ q.min_amount or '' }}">首页</a>
+      <a class="btn secondary" href="/?page={{ (total + page_size - 1) // page_size }}&page_size={{ page_size }}&username={{ q.username or '' }}&keyword={{ q.keyword or '' }}&chat_title={{ q.chat_title or '' }}&start_time={{ q.start_time or '' }}&end_time={{ q.end_time or '' }}&min_amount={{ q.min_amount or '' }}">末页</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+

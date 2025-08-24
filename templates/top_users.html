@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h3 class="h3-compact">Top 用户</h3>
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>用户名</th>
+          <th>次数排行</th>
+          <th>金额排行</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="3">
+            <div class="stats">
+              <div>
+                <strong>按笔数</strong>
+                <div class="list" role="list">{%- for u in items.by_count -%}<div role="listitem">{{ u.username or '-' }}：{{ u.count }} 笔（¥{{ '{:,}'.format(u.amount) }}）</div>{%- endfor -%}</div>
+              </div>
+              <div>
+                <strong>按金额</strong>
+                <div class="list" role="list">{%- for u in items.by_amount -%}<div role="listitem">{{ u.username or '-' }}：¥{{ '{:,}'.format(u.amount) }}（{{ u.count }} 笔）</div>{%- endfor -%}</div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+

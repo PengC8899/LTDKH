@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h3 class="h3-compact">TOP 用户统计</h3>
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 50%;">按笔数排行</th>
+          <th style="width: 50%;">按金额排行</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% set max_rows = [items.by_count|length, items.by_amount|length]|max %}
+        {% for i in range(max_rows) %}
+        <tr>
+          <td>
+            {% if i < items.by_count|length %}
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="background: rgba(102, 126, 234, 0.3); color: #667eea; padding: 6px 10px; border-radius: 20px; font-weight: 500; min-width: 35px; text-align: center; backdrop-filter: blur(10px);">{{ i + 1 }}</span>
+                <span class="mono" style="color: #667eea;">{{ items.by_count[i].username or '-' }}</span>
+                <span style="color: #e0e6ed;">{{ items.by_count[i].count }} 笔</span>
+                <span style="color: rgba(224, 230, 237, 0.6); font-size: 12px;">(¥{{ '{:,}'.format(items.by_count[i].amount) }})</span>
+              </div>
+            {% endif %}
+          </td>
+          <td>
+            {% if i < items.by_amount|length %}
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="background: rgba(118, 75, 162, 0.3); color: #764ba2; padding: 6px 10px; border-radius: 20px; font-weight: 500; min-width: 35px; text-align: center; backdrop-filter: blur(10px);">{{ i + 1 }}</span>
+                <span class="mono" style="color: #764ba2;">{{ items.by_amount[i].username or '-' }}</span>
+                <span style="color: #e0e6ed;">¥{{ '{:,}'.format(items.by_amount[i].amount) }}</span>
+                <span style="color: rgba(224, 230, 237, 0.6); font-size: 12px;">({{ items.by_amount[i].count }} 笔)</span>
+              </div>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

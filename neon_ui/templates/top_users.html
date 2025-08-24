@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h3 class="h3-compact">TOP 用户统计</h3>
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 50%;">按笔数排行</th>
+          <th style="width: 50%;">按金额排行</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% set max_rows = [items.by_count|length, items.by_amount|length]|max %}
+        {% for i in range(max_rows) %}
+        <tr>
+          <td>
+            {% if i < items.by_count|length %}
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="background: linear-gradient(45deg, #ff00ff, #00ffff); color: #000; padding: 4px 8px; border-radius: 15px; font-weight: bold; min-width: 30px; text-align: center;">{{ i + 1 }}</span>
+                <span class="mono" style="color: #00ffff;">{{ items.by_count[i].username or '-' }}</span>
+                <span style="color: #ff00ff;">{{ items.by_count[i].count }} 笔</span>
+                <span style="color: #999; font-size: 12px;">(¥{{ '{:,}'.format(items.by_count[i].amount) }})</span>
+              </div>
+            {% endif %}
+          </td>
+          <td>
+            {% if i < items.by_amount|length %}
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="background: linear-gradient(45deg, #ff00ff, #00ffff); color: #000; padding: 4px 8px; border-radius: 15px; font-weight: bold; min-width: 30px; text-align: center;">{{ i + 1 }}</span>
+                <span class="mono" style="color: #00ffff;">{{ items.by_amount[i].username or '-' }}</span>
+                <span style="color: #ff00ff;">¥{{ '{:,}'.format(items.by_amount[i].amount) }}</span>
+                <span style="color: #999; font-size: 12px;">({{ items.by_amount[i].count }} 笔)</span>
+              </div>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

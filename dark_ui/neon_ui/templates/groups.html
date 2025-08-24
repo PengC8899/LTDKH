@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <form method="get" action="/ui/groups">
+    <div class="filters">
+      <label class="sr-only" for="q">搜索</label>
+      <input id="q" name="q" placeholder="按标题/用户名搜索" value="{{ q or '' }}" />
+      <label class="sr-only" for="type">类型</label>
+      <select id="type" name="type" title="群组类型">
+        <option value="">全部类型</option>
+        <option value="megagroup" {% if type == 'megagroup' %}selected{% endif %}>超级群</option>
+        <option value="broadcast" {% if type == 'broadcast' %}selected{% endif %}>频道</option>
+      </select>
+      <button class="btn" type="submit">筛选</button>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <h3 class="h3-compact">群组清单（共 {{ total }} 条）</h3>
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>标题</th>
+          <th>用户名</th>
+          <th>类型</th>
+          <th>去重触发用户数</th>
+          <th>更新时间</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for g in items %}
+        <tr>
+          <td class="mono">{{ g.id }}</td>
+          <td>{{ g.title or '-' }}</td>
+          <td class="mono">{{ g.username or '-' }}</td>
+          <td>{% if g.is_broadcast %}<span class="tag">频道</span>{% elif g.is_megagroup %}<span class="tag">超级群</span>{% else %}<span class="tag">群</span>{% endif %}</td>
+          <td class="mono">{{ g.unique_users or 0 }}</td>
+          <td class="mono">{{ g.updated_at or '-' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="flex mt-8">
+    <span>第 {{ page }} / {{ (total + page_size - 1) // page_size }} 页</span>
+    {% if page > 1 %}
+      <a class="btn secondary" href="/ui/groups?page={{ page - 1 }}&page_size={{ page_size }}&q={{ q or '' }}&type={{ type or '' }}">上一页</a>
+    {% endif %}
+    {% if page * page_size < total %}
+      <a class="btn" href="/ui/groups?page={{ page + 1 }}&page_size={{ page_size }}&q={{ q or '' }}&type={{ type or '' }}">下一页</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+

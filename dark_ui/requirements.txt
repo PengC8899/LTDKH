@@ -1,0 +1,18 @@
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+telethon==1.36.0
+aiogram==3.7.0
+redis==5.0.4
+APScheduler==3.10.4
+SQLAlchemy==2.0.32
+asyncpg==0.29.0
+Jinja2==3.1.4
+python-dotenv==1.0.1
+pydantic==2.7.4
+aiohttp==3.9.5
+python-dateutil==2.9.0.post0
+tzdata==2024.1
+greenlet==3.0.3
+
+# 类型提示（可选，用于静态检查）
+types-redis

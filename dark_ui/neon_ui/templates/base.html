@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title or 'tg-watchdog 后台' }}</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <header>
+      <div class="container header-bar">
+        <div class="header-left">
+          <strong>龍腾娱乐大客户广播</strong>
+          <span class="tag">在线</span>
+        </div>
+        <nav class="nav-links">
+          <a class="btn secondary" href="/">客户记录</a>
+          <a class="btn secondary" href="/ui/groups">群组</a>
+          <a class="btn secondary" href="/ui/top-users">Top 用户</a>
+          <a class="btn secondary" href="/docs" target="_blank" rel="noreferrer">API 文档</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <div class="container">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+    <script>
+      function copyText(text){
+        navigator.clipboard.writeText(text).then(()=>{ alert('已复制：' + text); });
+      }
+    </script>
+  </body>
+  </html>
+

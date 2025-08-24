@@ -1,0 +1,8 @@
+{
+  "venvPath": "/Users/pccc/LTDKH_BOT",
+  "venv": ".venv311",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "none",
+  "reportMissingTypeStubs": "none"
+}
+
