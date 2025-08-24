@@ -14,7 +14,7 @@ PURPLE='\033[0;35m'
 NC='\033[0m' # No Color
 
 # 配置变量（请根据实际情况修改）
-VPS_IP="your_vps_ip"  # 请替换为你的 VPS IP
+VPS_IP="47.130.151.244"  # VPS 公网 IP
 VPS_USER="ubuntu"
 KEY_FILE="PC999.pem"
 REMOTE_PATH="~/LTDKH_BOT"
