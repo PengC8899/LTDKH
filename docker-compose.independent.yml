@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  # Redis服务 - 独立端口
+  ltdkh-redis:
+    image: redis:7-alpine
+    container_name: ltdkh-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"  # 使用6380端口避免冲突
+    volumes:
+      - ltdkh_redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - ltdkh-network
+
+  # PostgreSQL数据库 - 独立端口
+  ltdkh-postgres:
+    image: postgres:15-alpine
+    container_name: ltdkh-postgres
+    restart: unless-stopped
+    ports:
+      - "5433:5432"  # 使用5433端口避免冲突
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ltdkh_bot}
+      POSTGRES_USER: ${POSTGRES_USER:-ltdkh_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-your_secure_password_here}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ltdkh_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ltdkh_user} -d ${POSTGRES_DB:-ltdkh_bot}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - ltdkh-network
+
+  # 主应用服务 - 独立端口
+  ltdkh-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ltdkh-app
+    restart: unless-stopped
+    ports:
+      - "8013:8012"  # 外部使用8013端口避免冲突
+    environment:
+      # 数据库配置
+      POSTGRES_HOST: ltdkh-postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-ltdkh_bot}
+      POSTGRES_USER: ${POSTGRES_USER:-ltdkh_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-your_secure_password_here}
+      
+      # Redis配置
+      REDIS_HOST: ltdkh-redis
+      REDIS_PORT: 6379
+      REDIS_DB: ${REDIS_DB:-0}
+      
+      # Telegram Bot配置
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      
+      # 账户配置
+      ACCOUNT_API_ID: ${ACCOUNT_API_ID}
+      ACCOUNT_API_HASH: ${ACCOUNT_API_HASH}
+      ACCOUNT_PHONE_NUMBER: ${ACCOUNT_PHONE_NUMBER}
+      
+      # 应用配置
+      APP_HOST: ${APP_HOST:-0.0.0.0}
+      APP_PORT: ${APP_PORT:-8012}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      
+      # 域名配置（可选）
+      DOMAIN: ${DOMAIN:-}
+    volumes:
+      - ./sessions:/app/sessions
+      - ./data:/app/data
+    depends_on:
+      ltdkh-postgres:
+        condition: service_healthy
+      ltdkh-redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8012/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - ltdkh-network
+
+volumes:
+  ltdkh_postgres_data:
+    driver: local
+  ltdkh_redis_data:
+    driver: local
+
+networks:
+  ltdkh-network:
+    driver: bridge
+    name: ltdkh-network
