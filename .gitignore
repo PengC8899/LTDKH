@@ -63,6 +63,24 @@ yarn-error.log*
 *.sqlite
 *.sqlite3
 
+# Large files and archives
+*.tar.gz
+*.zip
+
+# Log files
+data/logs/*.log
+vps-deployment-package/data/logs/*.log
+
+# Database data files (should not be in version control)
+data/postgres/
+data/redis/
+
+# Runtime data
+data/uploads/
+data/backups/
+data/cache/
+data/tmp/
+
 # Temporary files
 tmp/
 temp/
