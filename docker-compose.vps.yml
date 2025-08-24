@@ -1,0 +1,119 @@
+version: '3.8'
+
+services:
+  ltdkh-bot:
+    build: .
+    container_name: ltdkh_bot
+    restart: unless-stopped
+    ports:
+      - "8012:8012"
+    environment:
+      - ENVIRONMENT=production
+      - DATABASE_URL=postgresql+asyncpg://postgres:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - REDIS_URL=redis://redis:6379/0
+      - API_ID=${API_ID}
+      - API_HASH=${API_HASH}
+      - BOT_TOKEN=${BOT_TOKEN}
+      - ACCOUNT1_PHONE=${ACCOUNT1_PHONE}
+      - ACCOUNT1_PASSWORD=${ACCOUNT1_PASSWORD}
+      - ACCOUNT2_PHONE=${ACCOUNT2_PHONE}
+      - ACCOUNT2_PASSWORD=${ACCOUNT2_PASSWORD}
+      - ACCOUNT3_PHONE=${ACCOUNT3_PHONE}
+      - ACCOUNT3_PASSWORD=${ACCOUNT3_PASSWORD}
+      - DOMAIN=${DOMAIN}
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./sessions:/app/sessions
+      - ./data/logs:/app/data/logs
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - ltdkh-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8012/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: ltdkh_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ltdkh-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: ltdkh_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    networks:
+      - ltdkh-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  nginx:
+    image: nginx:alpine
+    container_name: ltdkh_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - ltdkh-bot
+    networks:
+      - ltdkh-network
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  certbot:
+    image: certbot/certbot
+    container_name: ltdkh_certbot
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/lib/letsencrypt:/var/lib/letsencrypt
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    command: certbot renew --quiet
+    profiles:
+      - ssl-renewal
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  ltdkh-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

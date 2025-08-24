@@ -1,0 +1,63 @@
+[Unit]
+Description=LTDKH Bot - Telegram Watchdog Service
+Documentation=https://github.com/PengC8899/LTDKH
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/ltdkh-bot
+EnvironmentFile=/opt/ltdkh-bot/.env.prod
+
+# Start command
+ExecStart=/usr/local/bin/docker-compose -f docker-compose.vps.yml up -d
+
+# Stop command
+ExecStop=/usr/local/bin/docker-compose -f docker-compose.vps.yml down
+
+# Reload command
+ExecReload=/usr/local/bin/docker-compose -f docker-compose.vps.yml restart
+
+# Health check
+ExecStartPost=/bin/bash -c 'sleep 30 && curl -f http://localhost:8012/health || exit 1'
+
+# User and group
+User=root
+Group=root
+
+# Security settings
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/opt/ltdkh-bot
+ReadWritePaths=/var/lib/docker
+ReadWritePaths=/var/run/docker.sock
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+MemoryLimit=2G
+CPUQuota=200%
+
+# Restart policy
+Restart=on-failure
+RestartSec=10
+StartLimitInterval=60
+StartLimitBurst=3
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ltdkh-bot
+
+# Environment variables
+Environment=COMPOSE_PROJECT_NAME=ltdkh
+Environment=DOCKER_BUILDKIT=1
+Environment=COMPOSE_DOCKER_CLI_BUILD=1
+
+[Install]
+WantedBy=multi-user.target
+Alias=ltdkh.service
