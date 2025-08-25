@@ -14,7 +14,7 @@ PURPLE='\033[0;35m'
 NC='\033[0m' # No Color
 
 # 配置变量（请根据实际情况修改）
-VPS_IP="47.130.151.244"  # VPS 公网 IP
+VPS_IP="54.254.221.99"  # VPS 公网 IP
 VPS_USER="ubuntu"
 KEY_FILE="PC999.pem"
 REMOTE_PATH="~/LTDKH_BOT"
@@ -273,8 +273,8 @@ show_deployment_result() {
     echo "   服务名称: ltdkh-bot"
     echo ""
     echo "🌐 访问地址："
-    echo "   主站: https://7577.bet"
-    echo "   管理面板: https://7577.bet/admin"
+    echo "   主站: https://7575.PRO"
+    echo "   管理面板: https://7575.PRO/admin"
     echo ""
     echo "📋 常用管理命令："
     echo "   查看服务状态: ssh -i $KEY_FILE $VPS_USER@$VPS_IP 'sudo systemctl status ltdkh-bot'"

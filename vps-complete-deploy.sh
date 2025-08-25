@@ -2,13 +2,13 @@
 
 # LTDKH Bot VPS Complete Deployment Script
 # This script automates the complete deployment of LTDKH Bot on a VPS
-# Domain: 7577.bet
+# Domain: 7575.PRO
 # Repository: https://github.com/PengC8899/LTDKH.git
 
 set -e
 
 # Configuration
-DOMAIN="7577.bet"
+DOMAIN="7575.PRO"
 REPO_URL="https://github.com/PengC8899/LTDKH.git"
 INSTALL_DIR="/opt/ltdkh-bot"
 SERVICE_NAME="ltdkh-bot"
@@ -236,8 +236,8 @@ setup_nginx() {
         cp nginx/nginx.conf /etc/nginx/nginx.conf
     fi
     
-    if [ -f "nginx/conf.d/7577.bet.conf" ]; then
-        cp nginx/conf.d/7577.bet.conf "$NGINX_AVAILABLE/$DOMAIN"
+    if [ -f "nginx/conf.d/7575.PRO.conf" ]; then
+        cp nginx/conf.d/7575.PRO.conf "$NGINX_AVAILABLE/$DOMAIN"
         ln -sf "$NGINX_AVAILABLE/$DOMAIN" "$NGINX_ENABLED/$DOMAIN"
     fi
     

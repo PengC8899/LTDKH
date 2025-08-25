@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# SSL Certificate Setup Script for 7577.bet
+# SSL Certificate Setup Script for 7575.PRO
 # This script automates Let's Encrypt SSL certificate setup
 
 set -e
 
 # Configuration
-DOMAIN="7577.bet"
-EMAIL="admin@7577.bet"  # Change this to your email
+DOMAIN="7575.PRO"
+EMAIL="admin@7575.PRO"  # Change this to your email
 WEBROOT="/var/www/certbot"
 
 # Colors for output

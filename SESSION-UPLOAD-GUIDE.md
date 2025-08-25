@@ -269,8 +269,8 @@ sudo journalctl -u ltdkh-bot --no-pager -n 10
 EOF
 
 echo "✅ 部署完成！"
-echo "🌐 访问地址：https://7577.bet"
-echo "📊 监控面板：https://7577.bet/admin"
+echo "🌐 访问地址：https://7575.PRO"
+echo "📊 监控面板：https://7575.PRO/admin"
 ```
 
 ## 🔹 注意事项

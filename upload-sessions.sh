@@ -196,8 +196,8 @@ show_next_steps() {
     echo "      sudo journalctl -u ltdkh-bot -f"
     echo ""
     echo "🌐 部署完成后访问地址："
-    echo "   - 主站：https://7577.bet"
-    echo "   - 管理面板：https://7577.bet/admin"
+    echo "   - 主站：https://7575.PRO"
+    echo "   - 管理面板：https://7575.PRO/admin"
     echo ""
 }
 
