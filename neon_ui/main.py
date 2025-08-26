@@ -617,6 +617,7 @@ async def refresh_groups_catalog(clients: List[TelegramClient]) -> None:
     try:
         from telethon.tl.types import Channel, Chat
         groups: List[Dict[str, Any]] = []
+        seen_ids = set()  # 用于去重
         for client in clients:
             try:
                 dialogs = await client.get_dialogs()  # type: ignore
@@ -632,8 +633,9 @@ async def refresh_groups_catalog(clients: List[TelegramClient]) -> None:
                 is_broadcast = bool(getattr(entity, "broadcast", False))
                 if gid is None:
                     continue
-                # 仅记录群/超级群/频道
-                if isinstance(entity, (Channel, Chat)):
+                # 仅记录群/超级群/频道，并去重
+                if isinstance(entity, (Channel, Chat)) and int(gid) not in seen_ids:
+                    seen_ids.add(int(gid))
                     groups.append(
                         {
                             "id": int(gid),
